@@ -18,7 +18,7 @@ public class PlayerOnGround : PlayerBaseState
     {
         CheckSwitchState();
 
-        if (_input.sprint) _sprintMultiply = 2f;
+        if (_input.sprint) _sprintMultiply = 1.5f;
         else _sprintMultiply = 1.0f;
 
         _velocityX = _input.moveHorizontal * _sprintMultiply;
@@ -45,11 +45,11 @@ public class PlayerOnGround : PlayerBaseState
     {
         if (_input.interact)
         {
-            if(!_context.targetInfor)
+            if(_context.target == null)
             {
                 Debug.Log("Have no target");
             }
-            else if (_context.targetInfor.type == TypeOfInteraction.ENEMY) 
+            else if (_context.target.GetType() == typeof(EnemyInformation)) 
                 SwitchState(_factory.MeleeAttack());
         }
         if (_input.jump) SwitchState(_factory.Jump());

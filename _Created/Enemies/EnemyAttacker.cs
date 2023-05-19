@@ -11,6 +11,7 @@ public abstract class EnemyAttacker: MonoBehaviour, IAttacker
 
     [SerializeField] protected float _coolDown = 1f;
     [SerializeField] protected bool _allowAttack = true;
+    [SerializeField] protected EnemyStateMachine _context;
 
     private void Start()
     {
@@ -31,10 +32,10 @@ public abstract class EnemyAttacker: MonoBehaviour, IAttacker
     }
     protected virtual void LookAtTarget(Vector3 target)
     {
-        EnemyStateMachine context = GetComponent<EnemyStateMachine>();
         Vector3 positionTarget = new Vector3(target.x, transform.position.y, target.z);
         Vector3 direction = positionTarget - transform.position;
         transform.DORotateQuaternion(Quaternion.LookRotation(direction, transform.up), 0.5f);
+        //_context.transform.rotation = Quaternion.Lerp(_context.transform.rotation, Quaternion.Euler(positionTarget), 0.5f * Time.deltaTime);
     }
     public abstract bool OnEnterAttack();
 

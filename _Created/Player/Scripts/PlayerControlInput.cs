@@ -7,4 +7,5 @@ public class PlayerControlInput : MonoBehaviour
     public bool sprint { get => Input.GetKey(KeyCode.LeftShift); }
     public bool jump { get => Input.GetKeyUp(KeyCode.Space); }
     public bool interact { get => Input.GetMouseButtonDown(0); }
+    public bool switchTarget { get => Input.GetMouseButtonDown(1); }
 }

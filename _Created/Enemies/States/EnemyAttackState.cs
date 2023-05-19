@@ -30,6 +30,7 @@ public class EnemyAttackState : EnemyBaseState
     public override void UpdateState()
     {
         CheckSwitchState();
+        _attacker.OnStayAttack();
     }
     public override void ExitState()
     {

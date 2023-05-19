@@ -26,7 +26,8 @@ public class PlayerMeleeAttack: PlayerBaseState
         _animator.SetInteger(_hashInt, _currentAttack);
 
         // rotate to focus at target
-        Vector3 positionTarget = new Vector3(_context.targetInfor.transform.position.x, _transform.position.y, _context.targetInfor.transform.position.z);
+        EnemyInformation target = (EnemyInformation)_context.target;
+        Vector3 positionTarget = new Vector3(target.transform.position.x, _transform.position.y, target.transform.position.z);
         Vector3 direction = positionTarget - _transform.position;
         _transform.DORotateQuaternion(Quaternion.LookRotation(direction, _transform.up), 0.5f);
         
@@ -54,7 +55,7 @@ public class PlayerMeleeAttack: PlayerBaseState
     }
     private bool PlayerAcceptCombo()
     {
-        return _input.interact && _context.targetInfor.type == TypeOfInteraction.ENEMY;
+        return _input.interact && _context.target.GetType() == typeof(EnemyInformation);
     }
     private void ContinueCombo()
     {

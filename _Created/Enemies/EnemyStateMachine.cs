@@ -5,11 +5,11 @@ using UnityEngine.AI;
 public class EnemyStateMachine: MonoBehaviour
 {
     [Header("preference")]
+    public EnemyInformation infor;
     public Animator animator;
     public NavMeshAgent agent;
     public Transform player;
     [Header("Information")]
-    public float moveSpeed;
     public EnemyStateFactory factory;
     public EnemyBaseState currentState;
     [Header("Patrol setup")]
@@ -20,7 +20,7 @@ public class EnemyStateMachine: MonoBehaviour
     {
         factory = new EnemyStateFactory(this);
         player = FindObjectOfType<PlayerStateMachine>().transform;
-        agent.speed = moveSpeed;
+        agent.speed = infor.speed;
         currentState = factory.Patrol();
     }
     private void Start()
@@ -35,5 +35,9 @@ public class EnemyStateMachine: MonoBehaviour
     private void Update()
     {
         currentState.UpdateState();
+    }
+    public void BackToDefaultState()
+    {
+        currentState.SwitchState(factory.Patrol());
     }
 }

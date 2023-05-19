@@ -6,15 +6,12 @@ using UnityEngine.UIElements;
 public class SkeletonAttacker : EnemyAttacker
 {
     [SerializeField] Animator _animator;
-    [SerializeField] EnemyStateMachine _context;
     public override bool OnEnterAttack()
     {
         if (!_allowAttack) return false;
 
         _context.agent.isStopped = true;  // stop agent to attack
 
-        // rotate to focus at target
-        LookAtTarget(_context.player.position);
         //
 
         attackComplete = false;
@@ -31,6 +28,9 @@ public class SkeletonAttacker : EnemyAttacker
 
     public override bool OnStayAttack()
     {
-        throw new System.NotImplementedException();
+
+        // rotate to focus at target
+        LookAtTarget(_context.player.position);
+        return true;
     }
 }

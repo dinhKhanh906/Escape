@@ -6,6 +6,7 @@ public class PlayerAttackEvent : MonoBehaviour
 {
     public LayerMask enemyLayer;
     public PlayerStateMachine context;
+    public PlayerInformation playerInfor;
     [Header("View collide setting")]
     [SerializeField] bool _overViewColider;
     [SerializeField] Vector3 _centerOffset;
@@ -37,26 +38,7 @@ public class PlayerAttackEvent : MonoBehaviour
         float duration = float.Parse(values[1]);
 
         Vector3 targetPosition = context.transform.position + context.transform.forward * distance;
-        StartCoroutine(MoveToTargetPoint(targetPosition, duration));
-    }
-    private IEnumerator MoveToTargetPoint(Vector3 targetPosition, float duration)
-    {
-        Vector3 startPosition = context.transform.position;
-
-        float elapsedTime = 0f;
-        while (elapsedTime < duration)
-        {
-            float t = elapsedTime / duration;
-            Vector3 currentPosition = Vector3.Lerp(startPosition, targetPosition, t);
-
-            context.character.Move((currentPosition - transform.position).normalized * context.moveSpeed * Time.deltaTime);
-
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-
-        // make sure move to exactly point
-        context.character.Move((targetPosition - transform.position).normalized * context.moveSpeed * Time.deltaTime);
+        StartCoroutine(context.MoveToTargetPoint(targetPosition, duration));
     }
     public void HitForward(string value)
     {
@@ -79,7 +61,8 @@ public class PlayerAttackEvent : MonoBehaviour
         {
             foreach(Collider col in enemyCols)
             {
-                Debug.Log(col.transform.root.gameObject.name);
+                EnemyCollider enemy = col.GetComponent<EnemyCollider>();
+                enemy.Impact(playerInfor.damage);
             }
         }
     }

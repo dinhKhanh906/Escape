@@ -1,4 +1,6 @@
 using UnityEngine;
+using System;
+using System.Collections;
 
 public class PlayerStateMachine : MonoBehaviour
 {
@@ -22,8 +24,10 @@ public class PlayerStateMachine : MonoBehaviour
     public float turnDensity = 10f;
     Vector3 _targetEuler;
 
-    [Header("Interaction infor")]
-    public BaseInforInteraction targetInfor;
+    [Header("Target infor")]
+    public BaseInteraction target;
+    [SerializeField] float _forwardDetectionCenter;
+    [SerializeField] float _rangeDetectionTargets;
 
     private void Awake()
     {
@@ -38,6 +42,7 @@ public class PlayerStateMachine : MonoBehaviour
     private void Update()
     {
         currentState.UpdateState();
+        if (input.switchTarget) SwitchTarget();
     }
     private void FixedUpdate()
     {
@@ -53,6 +58,9 @@ public class PlayerStateMachine : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(groundCheck.position, radiusCheckGround);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.forward * _forwardDetectionCenter, _rangeDetectionTargets);
     }
     public bool Grounded()
     {
@@ -62,6 +70,9 @@ public class PlayerStateMachine : MonoBehaviour
         }
         else return false;
     }
+    protected virtual void SwitchTarget()
+    {
+    }
     public void SetMoveDirection(float x, float y, float z)
     {
         x *= moveSpeed;
@@ -69,5 +80,27 @@ public class PlayerStateMachine : MonoBehaviour
         moveDirection = transform.right * x
                         + transform.forward * z
                         + transform.up * y;
+    }
+    public void BackToDefaultState()
+    {
+        currentState.SwitchState(factory.OnGround());
+    }
+    public IEnumerator MoveToTargetPoint(Vector3 targetPosition, float duration)
+    {
+        Vector3 startPosition = transform.position;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            Vector3 currentPosition = Vector3.Lerp(startPosition, targetPosition, t);
+            character.Move((currentPosition - transform.position).normalized * moveSpeed * Time.deltaTime);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // make sure move to exactly point
+        character.Move((targetPosition - transform.position).normalized * moveSpeed * Time.deltaTime);
     }
 }

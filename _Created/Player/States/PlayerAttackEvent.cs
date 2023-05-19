@@ -1,6 +1,7 @@
-using DG.Tweening;
+using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 public class PlayerAttackEvent : MonoBehaviour
 {
     public LayerMask enemyLayer;
@@ -17,8 +18,6 @@ public class PlayerAttackEvent : MonoBehaviour
         if (_overViewColider)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawRay(transform.position, transform.right);
-            Gizmos.DrawRay(transform.position, transform.forward);
             Vector3 center = transform.position + transform.forward * _centerOffset.z + transform.right * _centerOffset.x + transform.up * _centerOffset.y;
             Gizmos.DrawWireSphere(center, _radiusColide);
         }
@@ -38,9 +37,26 @@ public class PlayerAttackEvent : MonoBehaviour
         float duration = float.Parse(values[1]);
 
         Vector3 targetPosition = context.transform.position + context.transform.forward * distance;
-        context.transform.DOMove(targetPosition, duration).SetEase(Ease.Linear)
-            .OnStart(() => context.character.enabled = false)
-            .OnComplete(() => context.character.enabled = true);
+        StartCoroutine(MoveToTargetPoint(targetPosition, duration));
+    }
+    private IEnumerator MoveToTargetPoint(Vector3 targetPosition, float duration)
+    {
+        Vector3 startPosition = context.transform.position;
+
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            float t = elapsedTime / duration;
+            Vector3 currentPosition = Vector3.Lerp(startPosition, targetPosition, t);
+
+            context.character.Move((currentPosition - transform.position).normalized * context.moveSpeed * Time.deltaTime);
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        // make sure move to exactly point
+        context.character.Move((targetPosition - transform.position).normalized * context.moveSpeed * Time.deltaTime);
     }
     public void HitForward(string value)
     {
@@ -58,13 +74,12 @@ public class PlayerAttackEvent : MonoBehaviour
 
         //
         Collider[] enemyCols = Physics.OverlapSphere(center, radius, enemyLayer);
-        Debug.Log(enemyCols.Length);
         if (enemyCols == null) return;
         if(enemyCols.Length > 0)
         {
             foreach(Collider col in enemyCols)
             {
-                Debug.Log(col.gameObject.name);
+                Debug.Log(col.transform.root.gameObject.name);
             }
         }
     }

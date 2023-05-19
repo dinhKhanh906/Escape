@@ -9,6 +9,7 @@ public class EnemyPatrol : EnemyBaseState
     NavMeshAgent _agent;
     Transform _player;
     Transform _transform;
+    Animator _animator;
     bool _foundPlayer;
     float _distanceToPlayer;
     float _breakTime;
@@ -21,6 +22,7 @@ public class EnemyPatrol : EnemyBaseState
         _currentTarget = _context.transform.position;
         _transform = _context.transform;
         _player = _context.player;
+        _animator = _context.animator;
         if (_context.destinationPoints.Length <= 0) Debug.LogWarning("Have no any patrol point");
         else
         {
@@ -34,6 +36,10 @@ public class EnemyPatrol : EnemyBaseState
     public override void UpdateState()
     {
         CheckSwitchState();
+
+        if(_agent.velocity != Vector3.zero) _animator.SetBool(EnemyAniParameter.isWalking, true);
+        else _animator.SetBool(EnemyAniParameter.isWalking, false);
+
         _distanceToPlayer = Vector3.Distance(_player.position, _transform.position);
         _foundPlayer = _context.readyToFindPlayer && _distanceToPlayer <= _context.playerDetection ? true : false;
     

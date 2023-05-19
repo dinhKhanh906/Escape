@@ -20,6 +20,7 @@ public class PlayerMeleeAttack: PlayerBaseState
         _transform = _context.transform;
         _input = _context.input;
         _animator = _context.animator;
+        _currentAttack = 1;
         _context.SetMoveDirection(0f, 0f, 0f);
         _animator.SetTrigger(_hashTrigger);
         _animator.SetInteger(_hashInt, _currentAttack);
@@ -28,11 +29,12 @@ public class PlayerMeleeAttack: PlayerBaseState
         Vector3 positionTarget = new Vector3(_context.targetInfor.transform.position.x, _transform.position.y, _context.targetInfor.transform.position.z);
         Vector3 direction = positionTarget - _transform.position;
         _transform.DORotateQuaternion(Quaternion.LookRotation(direction, _transform.up), 0.5f);
+        
+        if(_currentAttack == 1) _context.SetMoveDirection(0f, 0f, 0f);
     }
     public override void UpdateState()
     {
         CheckSwitchState();
-        if(_currentAttack == 1) _context.SetMoveDirection(0f, 0f, 0f);
 
         _stateCompleted = _animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
         if (listening)

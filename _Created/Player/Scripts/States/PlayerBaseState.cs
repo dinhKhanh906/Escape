@@ -1,5 +1,4 @@
 ﻿
-
 public class PlayerBaseState: IBaseState
 {
     protected PlayerStateMachine _context;
@@ -11,6 +10,7 @@ public class PlayerBaseState: IBaseState
     }
     public virtual void EnterState() { }
     public virtual void UpdateState() { }
+    public virtual void FixedUpdateState() { }
     public virtual void ExitState() { }
     public virtual void CheckSwitchState() { }
     public virtual void SwitchState(PlayerBaseState newState)

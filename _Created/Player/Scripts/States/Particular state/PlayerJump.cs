@@ -1,11 +1,13 @@
 ﻿
 
 using UnityEngine;
+using UnityEngine.TextCore.Text;
 using UnityEngine.UIElements;
 
 public class PlayerJump : PlayerBaseState
 {
     PlayerControlInput _input;
+    CharacterController _character;
     Transform _transform;
     Vector3 _position;
     float _gravity;
@@ -17,6 +19,7 @@ public class PlayerJump : PlayerBaseState
     {
         _gravity = _context.gravity;
         _input = _context.input;
+        _character = _context.character;
         _transform = _context.transform;
         _jumpForce = _context.jumpHeight;
 
@@ -34,6 +37,10 @@ public class PlayerJump : PlayerBaseState
         _zAxis = _input.moveVertical;
         _yAxis = _jumpForce;
         _context.SetMoveDirection(_xAxis, _yAxis, _zAxis);
+    }
+    public override void FixedUpdateState()
+    {
+        if (_character.enabled) _character.Move(_context.moveDirection * Time.deltaTime);
     }
     public override void CheckSwitchState()
     {

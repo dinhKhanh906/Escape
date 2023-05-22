@@ -57,7 +57,7 @@ public class EnemyAttackEvent: MonoBehaviour
             foreach (Collider col in playerCols)
             {
                 PlayerCollider player = col.GetComponent<PlayerCollider>();
-                if (player != null) player.Impact(infor.damage);
+                if (player != null) player.ReceiveDame(infor.damage);
             }
         }
     }

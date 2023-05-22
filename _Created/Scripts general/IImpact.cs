@@ -1,5 +1,5 @@
 ﻿
-public interface IImpact
+public interface IReceiveDame
 {
-    public void Impact(float damage);
+    public void ReceiveDame(float damage);
 }

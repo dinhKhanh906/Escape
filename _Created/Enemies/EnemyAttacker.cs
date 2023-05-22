@@ -34,8 +34,8 @@ public abstract class EnemyAttacker: MonoBehaviour, IAttacker
     {
         Vector3 positionTarget = new Vector3(target.x, transform.position.y, target.z);
         Vector3 direction = positionTarget - transform.position;
-        transform.DORotateQuaternion(Quaternion.LookRotation(direction, transform.up), 0.5f);
-        //_context.transform.rotation = Quaternion.Lerp(_context.transform.rotation, Quaternion.Euler(positionTarget), 0.5f * Time.deltaTime);
+        //transform.DORotateQuaternion(Quaternion.LookRotation(direction, transform.up), 0.5f);
+        _context.transform.rotation = Quaternion.Lerp(_context.transform.rotation, Quaternion.Euler(positionTarget), 0.5f * Time.deltaTime);
     }
     public abstract bool OnEnterAttack();
 

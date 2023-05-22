@@ -40,5 +40,6 @@ public class EnemyAttackState : EnemyBaseState
     public override void CheckSwitchState()
     {
         if (_attacker.attackComplete) SwitchState(_factory.Chasing());
+        //if(_context.)
     }
 }

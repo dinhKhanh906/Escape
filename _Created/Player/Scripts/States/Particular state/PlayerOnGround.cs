@@ -1,9 +1,12 @@
 ﻿using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.TextCore.Text;
 
 public class PlayerOnGround : PlayerBaseState
 {
     PlayerControlInput _input;
+    CharacterController _character;
     float _sprintMultiply, _velocityX, _velocityZ, _aniSpeed;
     Animator _animator;
     int _hashMovement;
@@ -11,6 +14,7 @@ public class PlayerOnGround : PlayerBaseState
     public override void EnterState()
     {
         _input = _context.input;
+        _character = _context.character;
         _animator = _context.animator;
         _hashMovement = PlayerAniParameter.speed;
     }
@@ -41,16 +45,27 @@ public class PlayerOnGround : PlayerBaseState
 
         _context.SetMoveDirection(_velocityX, 0f, _velocityZ);
     }
+    public override void FixedUpdateState()
+    {
+        if (_character.enabled) _character.Move(_context.moveDirection * Time.deltaTime);
+    }
+    public override void ExitState()
+    {
+        _context.SetMoveDirection(0f, 0f, 0f);
+    }
     public override void CheckSwitchState()
     {
         if (_input.interact)
         {
-            if(_context.target == null)
+            if(_context.chooser.currentTarget == null)
             {
                 Debug.Log("Have no target");
             }
-            else if (_context.target.GetType() == typeof(EnemyInformation)) 
+            else if (_context.chooser.currentTarget.GetType() == typeof(EnemyInformation))
+            {
+                _context.SetMoveDirection(0f, 0f, 0f);
                 SwitchState(_factory.MeleeAttack());
+            }
         }
         if (_input.jump) SwitchState(_factory.Jump());
         else if (!_context.Grounded()) SwitchState(_factory.Falling());

@@ -1,5 +1,4 @@
-﻿using DG.Tweening;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerMeleeAttack: PlayerBaseState
 {
@@ -7,7 +6,6 @@ public class PlayerMeleeAttack: PlayerBaseState
 
     PlayerControlInput _input;
     Animator _animator;
-    Transform _transform;
     float _stateCompleted;
     float _finishStateTime = 0.8f;
     int _amountAttack = 4;  // for now has 4 attacks
@@ -17,21 +15,12 @@ public class PlayerMeleeAttack: PlayerBaseState
     public PlayerMeleeAttack(PlayerStateMachine context, PlayerStateFactory factory): base(context, factory) { }
     public override void EnterState()
     {
-        _transform = _context.transform;
         _input = _context.input;
         _animator = _context.animator;
         _currentAttack = 1;
-        _context.SetMoveDirection(0f, 0f, 0f);
         _animator.SetTrigger(_hashTrigger);
         _animator.SetInteger(_hashInt, _currentAttack);
-
-        // rotate to focus at target
-        EnemyInformation target = (EnemyInformation)_context.target;
-        Vector3 positionTarget = new Vector3(target.transform.position.x, _transform.position.y, target.transform.position.z);
-        Vector3 direction = positionTarget - _transform.position;
-        _transform.DORotateQuaternion(Quaternion.LookRotation(direction, _transform.up), 0.5f);
         
-        if(_currentAttack == 1) _context.SetMoveDirection(0f, 0f, 0f);
     }
     public override void UpdateState()
     {
@@ -55,20 +44,27 @@ public class PlayerMeleeAttack: PlayerBaseState
     }
     private bool PlayerAcceptCombo()
     {
-        return _input.interact && _context.target.GetType() == typeof(EnemyInformation);
+        // check player accept continue click to attacck
+        // and player grounded
+        return _input.interact && _context.chooser.currentTarget.GetType() == typeof(EnemyInformation) && _context.Grounded();
+    }
+    private void SwitchToNextAnimation()
+    {
+        _currentAttack = _animator.GetInteger(_hashInt);
+
+        _currentAttack++;
+        _animator.SetInteger(_hashInt, _currentAttack);
     }
     private void ContinueCombo()
     {
-        _currentAttack++;
-        listening = false;
+        SwitchToNextAnimation();
 
-        _animator.SetInteger(_hashInt, _currentAttack);
-        _context.SetMoveDirection(0f, 0f, 0f);
+        listening = false;
     }
     private void EndCombo()
     {
         _currentAttack = 0;
-        listening = false;
         _animator.SetInteger(_hashInt, 0);
+        listening = false;
     }
 }

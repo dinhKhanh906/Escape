@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using DG.Tweening;
 
 public class PlayerStateMachine : MonoBehaviour
 {
@@ -24,10 +25,8 @@ public class PlayerStateMachine : MonoBehaviour
     public float turnDensity = 10f;
     Vector3 _targetEuler;
 
-    [Header("Target infor")]
-    public BaseInteraction target;
-    [SerializeField] float _forwardDetectionCenter;
-    [SerializeField] float _rangeDetectionTargets;
+    [Header("Chooser infor")]
+    public PlayerDetection chooser;
 
     private void Awake()
     {
@@ -42,11 +41,10 @@ public class PlayerStateMachine : MonoBehaviour
     private void Update()
     {
         currentState.UpdateState();
-        if (input.switchTarget) SwitchTarget();
     }
     private void FixedUpdate()
     {
-        if(character.enabled) character.Move(moveDirection * Time.deltaTime);
+        currentState.FixedUpdateState();
         if(moveDirection.x != 0f || moveDirection.z != 0f)
         {
             _targetEuler = transform.rotation.eulerAngles;
@@ -58,9 +56,6 @@ public class PlayerStateMachine : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(groundCheck.position, radiusCheckGround);
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.forward * _forwardDetectionCenter, _rangeDetectionTargets);
     }
     public bool Grounded()
     {
@@ -70,16 +65,27 @@ public class PlayerStateMachine : MonoBehaviour
         }
         else return false;
     }
-    protected virtual void SwitchTarget()
-    {
-    }
     public void SetMoveDirection(float x, float y, float z)
     {
         x *= moveSpeed;
         z *= moveSpeed;
-        moveDirection = transform.right * x
-                        + transform.forward * z
-                        + transform.up * y;
+        if(x != 0 || y != 0 || z != 0)
+        {
+            moveDirection = transform.right * x + transform.forward * z + transform.up * y;
+        }
+        else
+        {
+            moveDirection = Vector3.zero;
+        }
+        
+    }
+    public void LookAtTarget()
+    {
+        // rotate to focus at target
+        EnemyInformation target = (EnemyInformation)chooser.currentTarget;
+        Vector3 positionTarget = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
+        Vector3 direction = positionTarget - transform.position;
+        transform.DORotateQuaternion(Quaternion.LookRotation(direction, transform.up), 0.5f);
     }
     public void BackToDefaultState()
     {
@@ -93,8 +99,7 @@ public class PlayerStateMachine : MonoBehaviour
         while (elapsedTime < duration)
         {
             float t = elapsedTime / duration;
-            Vector3 currentPosition = Vector3.Lerp(startPosition, targetPosition, t);
-            character.Move((currentPosition - transform.position).normalized * moveSpeed * Time.deltaTime);
+            character.Move((targetPosition - transform.position).normalized * moveSpeed * Time.deltaTime);
 
             elapsedTime += Time.deltaTime;
             yield return null;

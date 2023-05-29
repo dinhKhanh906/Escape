@@ -7,7 +7,7 @@ public class PlayerMeleeAttack: PlayerBaseState
     PlayerControlInput _input;
     Animator _animator;
     float _stateCompleted;
-    float _finishStateTime = 0.8f;
+    float _finishStateTime = 0.84f;
     int _amountAttack = 4;  // for now has 4 attacks
     int _currentAttack = 1; // start state with attack 1st
     int _hashTrigger = PlayerAniParameter.attackTrigger;
@@ -39,6 +39,7 @@ public class PlayerMeleeAttack: PlayerBaseState
     }
     public override void CheckSwitchState()
     {
+        if(_animator.GetInteger(_hashInt) != _currentAttack) SwitchState(_factory.OnGround());
         if (_currentAttack == 0 || _currentAttack > _amountAttack) SwitchState(_factory.OnGround());
         else if (_input.jump) SwitchState(_factory.Jump());
     }
@@ -46,7 +47,16 @@ public class PlayerMeleeAttack: PlayerBaseState
     {
         // check player accept continue click to attacck
         // and player grounded
-        return _input.interact && _context.chooser.currentTarget.GetType() == typeof(EnemyInformation) && _context.Grounded();
+        if (!_context.Grounded())
+            return false;
+        else if (!_input.interact)
+            return false;
+        else if (!_context.detection.currentTarget)
+            return false;
+        else if (_context.detection.currentTarget.GetType() != typeof(EnemyInformation))
+            return false;
+        else
+            return true;
     }
     private void SwitchToNextAnimation()
     {

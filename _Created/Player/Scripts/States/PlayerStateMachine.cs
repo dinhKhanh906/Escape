@@ -26,7 +26,7 @@ public class PlayerStateMachine : MonoBehaviour
     Vector3 _targetEuler;
 
     [Header("Chooser infor")]
-    public PlayerDetection chooser;
+    public PlayerDetector detection;
 
     private void Awake()
     {
@@ -82,7 +82,9 @@ public class PlayerStateMachine : MonoBehaviour
     public void LookAtTarget()
     {
         // rotate to focus at target
-        EnemyInformation target = (EnemyInformation)chooser.currentTarget;
+        if (!detection.currentTarget) return;
+
+        EnemyInformation target = (EnemyInformation)detection.currentTarget;
         Vector3 positionTarget = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
         Vector3 direction = positionTarget - transform.position;
         transform.DORotateQuaternion(Quaternion.LookRotation(direction, transform.up), 0.5f);
@@ -93,6 +95,8 @@ public class PlayerStateMachine : MonoBehaviour
     }
     public IEnumerator MoveToTargetPoint(Vector3 targetPosition, float duration)
     {
+        SetMoveDirection(0f, 0f, 0f);
+
         Vector3 startPosition = transform.position;
 
         float elapsedTime = 0f;

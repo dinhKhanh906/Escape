@@ -8,14 +8,14 @@ public class EnemyChasing : EnemyBaseState
     EnemyAttacker _attacker;
     NavMeshAgent _agent;
     NavMeshPath _path = new NavMeshPath();
-    Transform _player;
     Transform _transform;
+    Transform _player;
     bool _isLostPlayer;
     public override void EnterState()
     {
         _agent = _context.agent;
         _transform = _context.transform;
-        _player = _context.player;
+        _player = GameObject.FindGameObjectWithTag("Player").transform;
         _attacker = _context.GetComponent<EnemyAttacker>();
         _context.animator.SetBool(EnemyAniParameter.isWalking, true);
     }
@@ -35,6 +35,6 @@ public class EnemyChasing : EnemyBaseState
     public override void CheckSwitchState()
     {
         if (_isLostPlayer) SwitchState(_factory.Patrol());
-        if (Vector3.Distance(_player.position, _transform.position) <= _attacker.attackRange) SwitchState(_factory.Attack());
+        if (_attacker.CanAttackPlayer()) SwitchState(_factory.Attack());
     }
 }

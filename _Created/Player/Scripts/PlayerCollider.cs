@@ -1,4 +1,6 @@
 ﻿using System;
+using Unity.VisualScripting;
+using UnityEditor.Rendering.LookDev;
 using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.Events;
@@ -29,7 +31,9 @@ public class PlayerCollider: MonoBehaviour, IReceiveDame
         else
         {
             _animator.SetTrigger(PlayerAniParameter.impact);
-
+            // move character to backward a little
+            Vector3 targetBackward = _stateMachine.transform.position - _stateMachine.transform.forward * 0.6f;
+            StartCoroutine(_stateMachine.MoveToTargetPoint(targetBackward, 0.5f));
             // back to default state
             _stateMachine.BackToDefaultState();
         }

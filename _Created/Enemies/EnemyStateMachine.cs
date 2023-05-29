@@ -1,6 +1,7 @@
 ﻿
 using UnityEngine;
 using UnityEngine.AI;
+using DG.Tweening;
 
 public class EnemyStateMachine: MonoBehaviour
 {
@@ -8,7 +9,6 @@ public class EnemyStateMachine: MonoBehaviour
     public EnemyInformation infor;
     public Animator animator;
     public NavMeshAgent agent;
-    public Transform player;
     [Header("Information")]
     public EnemyStateFactory factory;
     public EnemyBaseState currentState;
@@ -19,7 +19,6 @@ public class EnemyStateMachine: MonoBehaviour
     private void Awake()
     {
         factory = new EnemyStateFactory(this);
-        player = FindObjectOfType<PlayerStateMachine>().transform;
         agent.speed = infor.speed;
         currentState = factory.Patrol();
     }
@@ -39,5 +38,9 @@ public class EnemyStateMachine: MonoBehaviour
     public void BackToDefaultState()
     {
         currentState.SwitchState(factory.Patrol());
+    }
+    public void MoveToTargetPoint(Vector3 targetPosition, float duration)
+    {
+        transform.DOMove(targetPosition, duration).SetEase(Ease.Linear);
     }
 }

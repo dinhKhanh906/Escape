@@ -10,6 +10,7 @@ public class EnemyPatrol : EnemyBaseState
     Transform _player;
     Transform _transform;
     Animator _animator;
+    EnemyAttacker _attacker;
     bool _foundPlayer;
     float _distanceToPlayer;
     float _breakTime;
@@ -19,9 +20,12 @@ public class EnemyPatrol : EnemyBaseState
     public override void EnterState()
     {
         _agent = _context.agent;
+        //
+        _attacker = _context.GetComponent<EnemyAttacker>();
+        _player = _attacker.player;
+        //
         _currentTarget = _context.transform.position;
         _transform = _context.transform;
-        _player = _context.player;
         _animator = _context.animator;
         if (_context.destinationPoints.Length <= 0) Debug.LogWarning("Have no any patrol point");
         else
@@ -52,6 +56,7 @@ public class EnemyPatrol : EnemyBaseState
     public override void CheckSwitchState()
     {
         if (_foundPlayer) SwitchState(_factory.Chasing());
+        else if (_attacker.CanAttackPlayer()) SwitchState(_factory.Attack());
     }
     private bool FinishedResting()
     {
@@ -70,7 +75,7 @@ public class EnemyPatrol : EnemyBaseState
             _currentTarget = _patrolPoints[index];
         }
         // random breakTime at next destination
-        _breakTime = Random.Range(0.5f, 2f);
+        _breakTime = Random.Range(1f, 3f);
         _timerCountDown = 0f;
 
         // set destination

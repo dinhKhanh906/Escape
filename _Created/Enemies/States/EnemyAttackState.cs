@@ -35,11 +35,9 @@ public class EnemyAttackState : EnemyBaseState
     public override void ExitState()
     {
         _attacker.OnExitAttack();
-        Debug.Log("attack -> chasing");
     }
     public override void CheckSwitchState()
     {
         if (_attacker.attackComplete) SwitchState(_factory.Chasing());
-        //if(_context.)
     }
 }

@@ -57,14 +57,14 @@ public class PlayerOnGround : PlayerBaseState
     {
         if (_input.interact)
         {
-            if(_context.chooser.currentTarget == null)
+            if (_context.detection.currentTarget)
             {
-                Debug.Log("Have no target");
-            }
-            else if (_context.chooser.currentTarget.GetType() == typeof(EnemyInformation))
-            {
-                _context.SetMoveDirection(0f, 0f, 0f);
-                SwitchState(_factory.MeleeAttack());
+                if(_context.detection.currentTarget.GetType() == typeof(EnemyInformation))
+                {
+                    _context.SetMoveDirection(0f, 0f, 0f);
+                    SwitchState(_factory.MeleeAttack());
+
+                }
             }
         }
         if (_input.jump) SwitchState(_factory.Jump());

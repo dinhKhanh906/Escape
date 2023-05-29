@@ -1,3 +1,5 @@
+using Unity.VisualScripting;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -8,6 +10,7 @@ public class EnemyCollider : MonoBehaviour, IReceiveDame
     [SerializeField] EnemyStateMachine _stateMachine;
     [SerializeField] EnemyInformation _infor;
     [SerializeField] Animator _animator;
+    [SerializeField] float _backwardDistance = 0.6f;
     private void Awake()
     {
         if (gameObject.layer != LayerMask.NameToLayer("Enemy"))
@@ -28,7 +31,9 @@ public class EnemyCollider : MonoBehaviour, IReceiveDame
         else
         {
             _animator.SetTrigger(EnemyAniParameter.impact);
-
+            //
+            Vector3 targetBackward = _stateMachine.transform.position - _stateMachine.transform.forward * _backwardDistance;
+            _stateMachine.MoveToTargetPoint( targetBackward, 0.5f);
             // back to default state
             _stateMachine.BackToDefaultState();
         }

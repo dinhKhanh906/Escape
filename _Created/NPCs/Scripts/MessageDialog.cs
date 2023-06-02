@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class MessageDialog: MonoBehaviour
 {
     [SerializeField] PlayerControlInput _input;
+    [SerializeField] float _delayText = 1f;
     [SerializeField] Image _avatar;
     [SerializeField] TMP_Text _nameActor;
     [SerializeField] TMP_Text _content;
@@ -49,7 +50,7 @@ public class MessageDialog: MonoBehaviour
             _avatar.sprite = newMessage.actor.avatar;
             _nameActor.text = newMessage.actor.name;
             //_content.text = newMessage.content;
-            StartCoroutine(textAnimation.Sequence(_content, newMessage.content, 0.8f));
+            StartCoroutine(textAnimation.Sequence(_content, newMessage.content, _delayText));
         }
         else
         {

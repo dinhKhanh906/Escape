@@ -6,6 +6,6 @@ public abstract class BaseItem: ScriptableObject
     public string nameItem;
     public Sprite avatar;
     public string description;
-
-    public abstract void Use();
+    public bool onlyUseSingle;
+    public abstract bool Use();
 }

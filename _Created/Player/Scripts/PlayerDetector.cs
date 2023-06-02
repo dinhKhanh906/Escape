@@ -87,6 +87,7 @@ public class PlayerDetector: MonoBehaviour
             RemoveTarget(interaction);
         }
     }
+    public List<BaseInteraction> TargetsCollection() => this.targetsCollection;
     public bool InteractToTarget()
     {
         if (!currentTarget)

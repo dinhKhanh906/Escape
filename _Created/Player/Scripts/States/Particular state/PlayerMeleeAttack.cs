@@ -4,7 +4,7 @@ public class PlayerMeleeAttack: PlayerBaseState
 {
     public bool listening;
 
-    PlayerControlInput _input;
+    PlayerThirdPersonInput _input;
     Animator _animator;
     float _stateCompleted;
     float _finishStateTime = 0.84f;

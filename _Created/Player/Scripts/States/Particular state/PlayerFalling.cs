@@ -5,7 +5,7 @@ using UnityEngine.TextCore.Text;
 
 public class PlayerFalling : PlayerBaseState
 {
-    PlayerControlInput _input;
+    PlayerThirdPersonInput _input;
     CharacterController _character;
     float _gravity;
     float _xAxis, _yAxis, _zAxis;

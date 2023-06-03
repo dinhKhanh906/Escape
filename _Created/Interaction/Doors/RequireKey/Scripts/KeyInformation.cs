@@ -13,7 +13,15 @@ public class KeyInformation: BaseItem
         if (detector != null)
         {
             BaseInteraction currentTarget = detector.currentTarget;
-            if(currentTarget.GetType() == typeof(DoorRequireKey))
+            if(currentTarget == null)
+            {
+                openSuccessful = false;
+            }
+            else if (!currentTarget.AllowInteract())
+            {
+                Debug.Log("target is too far to try open");
+            }
+            else if(currentTarget.GetType() == typeof(DoorRequireKey))
             {
                 DoorRequireKey doorTarget = (DoorRequireKey)currentTarget;
                 openSuccessful = doorTarget.OpenDoor(this);

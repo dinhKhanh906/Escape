@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventoryWindow : MonoBehaviour
+public class InventoryWindow : BaseWindow
 {
-    public bool hasChangedContent;
-    public ItemStorage playerStorage;
+    public PlayerStorage playerStorage;
     public ItemSlot slotSelected;
     [SerializeField] Transform _contentSlots;
     [SerializeField] GameObject _itemSlotPrefab;
@@ -14,24 +14,25 @@ public class InventoryWindow : MonoBehaviour
     [SerializeField] BaseButton _btnUse;
     [SerializeField] TMP_Text _tmpAmount;
     [SerializeField] TMP_Text _tmpDescriptionTitle, _tmpDescriptionContent;
-    private void Awake()
+    protected virtual void Awake()
     {
         _sliderAmountUse.onValueChanged.AddListener(delegate { UpdateValueFollowSlider(); });
         _btnUse.onClick.AddListener(delegate { UseItem(); });
 
     }
-    private void OnEnable()
+    public override void ShowWindow(bool isContinueAction)
     {
+        base.ShowWindow(isContinueAction);
         // now is not any slot selected
         DisplayDefault();
 
         // update items
-        //if(hasChangedContent) UpdateItems();
         UpdateItems();
     }
-    public void CloseWindow()
+    public override void CloseWindow()
     {
-        gameObject.SetActive(false);
+        base.CloseWindow();
+        if(slotSelected) slotSelected.UnHighLight();
     }
     public void ArrangeSlots()
     {
@@ -58,9 +59,10 @@ public class InventoryWindow : MonoBehaviour
         // setup amount use slider
         if (newItem.onlyUseSingle)
         {
-            _sliderAmountUse.maxValue = 1;
-            _sliderAmountUse.minValue = 1;
             _sliderAmountUse.value = 1;
+            _sliderAmountUse.gameObject.SetActive(false);
+            // amount always is one if type is "onlyUseSingle"
+            _tmpAmount.text = 1.ToString();
         }
         else
         {
@@ -71,14 +73,26 @@ public class InventoryWindow : MonoBehaviour
     }
     public void UpdateItems()
     {
+        // ignore if dont has any changed
+        if (!playerStorage.hasChangedElements) return;
+
+        // clear old slots
+        ClearOldSlots();
+
+        // respawn slots
         Dictionary<string, ItemsHolder> all = playerStorage.storage;
         foreach(ItemsHolder item in all.Values)
         {
             CreateItemSlot(item);
         }
-
-        // update complete
-        //hasChangedContent = false;
+    }
+    public void ClearOldSlots()
+    {
+        int sizeOldContent = _contentSlots.transform.childCount;
+        for(int i=0; i<sizeOldContent; i++)
+        {
+            Destroy(_contentSlots.transform.GetChild(i).gameObject);
+        }
     }
     public void CreateItemSlot(ItemsHolder info)
     {
@@ -92,7 +106,7 @@ public class InventoryWindow : MonoBehaviour
     }
     public void UseItem()
     {
-        int amount = (int) _sliderAmountUse.value;
+        int amount = int.Parse(_tmpAmount.text);
 
         slotSelected.Use(amount);
 

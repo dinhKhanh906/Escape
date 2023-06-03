@@ -24,7 +24,8 @@ public class ItemsHolder
         // use
         for(int i=0; i<amount; i++)
         {
-             this.amount--;
+            typeItem.Use();
+            this.amount--;
         }
         return true;
     }

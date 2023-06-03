@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class ItemStorage : MonoBehaviour
 {
-    [SerializeField] ItemsHolder[] allHolders;
-    public Dictionary<string, ItemsHolder> storage { get; private set; }
-    private void Awake()
+    [SerializeField] protected List<ItemsHolder> allHolders; // only for display in inspector
+    public Dictionary<string, ItemsHolder> storage { get; private set; } // only exchange through this dictionary
+    protected virtual void Awake()
     {
         SetupStorage();
     }
@@ -17,7 +17,7 @@ public class ItemStorage : MonoBehaviour
             storage.Add(holder.TypeItem().key, holder);
         }
     }
-    public bool AddHolder(ItemsHolder newHolder)
+    public virtual bool AddHolder(ItemsHolder newHolder)
     {
         if (newHolder == null) return false;
 
@@ -41,7 +41,7 @@ public class ItemStorage : MonoBehaviour
             return true;
         }
     }
-    public ItemsHolder GetHolderByType<T>() where T : BaseItem
+    public virtual ItemsHolder GetHolderByType<T>() where T : BaseItem
     {
         foreach(KeyValuePair<string, ItemsHolder> holder in storage)
         {
@@ -57,7 +57,7 @@ public class ItemStorage : MonoBehaviour
         // not found this type item in storage
         return null;
     }
-    public ItemsHolder GetHolderByType<T>(int amount) where T : BaseItem
+    public virtual ItemsHolder GetHolderByType<T>(int amount) where T : BaseItem
     {
         ItemsHolder result;
         foreach (KeyValuePair<string, ItemsHolder> holder in storage)
@@ -80,5 +80,32 @@ public class ItemStorage : MonoBehaviour
 
         // not found this type item in storage
         return null;
+    }
+    public virtual Dictionary<string, ItemsHolder> GetAllHolder()
+    {
+        // init to other dictionary
+        Dictionary<string, ItemsHolder> result = new Dictionary<string, ItemsHolder>();
+        foreach(var holder in storage)
+        {
+            result.Add(holder.Key, holder.Value);
+        }
+
+        this.storage.Clear();
+        this.allHolders.Clear();
+
+        return result;
+    }
+    public virtual void ImportFromOtherStorage(ItemStorage otherStorage)
+    {
+        Dictionary<string, ItemsHolder> newHolders = otherStorage.GetAllHolder();
+
+        if (newHolders != null)
+        {
+            foreach(ItemsHolder holder in newHolders.Values)
+            {
+                Debug.Log($"add new holder for {gameObject.name}");
+                this.AddHolder(holder);
+            }
+        }
     }
 }

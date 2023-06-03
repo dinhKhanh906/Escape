@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerDetector: MonoBehaviour
 {
     [HideInInspector] public BaseInteraction currentTarget;
-    public PlayerControlInput input;
+    public PlayerThirdPersonInput input;
     [SerializeField] protected List<BaseInteraction> targetsCollection;
     [SerializeField] protected Queue<BaseInteraction> waiting; // for targets detected but not viewable
     [SerializeField] protected int indexTarget = 0;

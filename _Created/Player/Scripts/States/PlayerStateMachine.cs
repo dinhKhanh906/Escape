@@ -8,7 +8,7 @@ public class PlayerStateMachine : MonoBehaviour
     [Header("preference")]
     public CharacterController character;
     public Animator animator;
-    public PlayerControlInput input;
+    public PlayerThirdPersonInput input;
     [Header("Information")]
     public float moveSpeed;
     public float jumpHeight;
@@ -36,7 +36,7 @@ public class PlayerStateMachine : MonoBehaviour
     private void Start()
     {
         currentState.EnterState();
-        Cursor.lockState = CursorLockMode.Locked;
+        PlayerUIInput.LockCursor();
     }
     private void Update()
     {

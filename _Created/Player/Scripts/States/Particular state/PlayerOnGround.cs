@@ -5,7 +5,7 @@ using UnityEngine.TextCore.Text;
 
 public class PlayerOnGround : PlayerBaseState
 {
-    PlayerControlInput _input;
+    PlayerThirdPersonInput _input;
     CharacterController _character;
     float _sprintMultiply, _velocityX, _velocityZ, _aniSpeed;
     Animator _animator;

@@ -1,8 +1,10 @@
+using Cinemachine;
 using UnityEngine;
 
-public class PlayerControlInput : MonoBehaviour
+public class PlayerThirdPersonInput : MonoBehaviour
 {
     public bool listening = true;
+    public CinemachineFreeLook virtualCam;
     private void Start()
     {
         listening = true;

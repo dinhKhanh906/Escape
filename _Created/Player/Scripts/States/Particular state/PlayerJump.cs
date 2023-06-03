@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 
 public class PlayerJump : PlayerBaseState
 {
-    PlayerControlInput _input;
+    PlayerThirdPersonInput _input;
     CharacterController _character;
     Transform _transform;
     Vector3 _position;

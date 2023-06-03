@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ChestController : BaseInteraction
@@ -10,14 +11,10 @@ public class ChestController : BaseInteraction
 
         if(_storage.storage.Count > 0)
         {
-            ItemsHolder itemsHolder = _storage.GetHolderByType<SwordController>(3);
-            if(itemsHolder != null )
+            PlayerStorage player = FindObjectOfType<PlayerStorage>();
+            if (player)
             {
-                Debug.Log($"Chest has: {itemsHolder.Amount()} {itemsHolder.TypeItem().name}");
-            }
-            else
-            {
-                Debug.Log("holder is null");
+                player.ImportFromOtherStorage(this._storage);
             }
         }
     }

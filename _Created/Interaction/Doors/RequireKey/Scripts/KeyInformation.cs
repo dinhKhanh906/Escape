@@ -8,6 +8,7 @@ public class KeyInformation: BaseItem
     public override bool Use()
     {
         bool openSuccessful = false;
+        string contentNotice = null;
         // unlock the door nearby
         PlayerDetector detector = FindObjectOfType<PlayerDetector>();
         if (detector != null)
@@ -16,21 +17,23 @@ public class KeyInformation: BaseItem
             if(currentTarget == null)
             {
                 openSuccessful = false;
+                contentNotice = "Not found any target";
             }
             else if (!currentTarget.AllowInteract())
             {
-                Debug.Log("target is too far to try open");
+                contentNotice = "target is too far to try open";
             }
             else if(currentTarget.GetType() == typeof(DoorRequireKey))
             {
                 DoorRequireKey doorTarget = (DoorRequireKey)currentTarget;
                 openSuccessful = doorTarget.OpenDoor(this);
+
+                // get result
+                contentNotice = openSuccessful ? "Open door target successful !" : "This key incorrect door target";
             }
         }
-        // show result
-        if (openSuccessful) Debug.Log("open this door successful");
-        else Debug.Log("open this door faild");
-
+        Notice notice = new Notice() { type = TypeNotice.log, content = contentNotice};
+        UIWindowManager.instance.ShowNotice(notice);
         return openSuccessful;
     }
 }

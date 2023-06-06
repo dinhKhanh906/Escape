@@ -1,7 +1,7 @@
 ﻿
 using UnityEngine;
 
-public class EnemyInformation: BaseInteraction
+public class EnemyController: BaseInteraction
 {
     public float heath;
     public float speed;
@@ -14,6 +14,6 @@ public class EnemyInformation: BaseInteraction
     }
     public override void Interact()
     {
-        Debug.Log($"interacted to enemy: {gameObject.name}");
+        
     }
 }

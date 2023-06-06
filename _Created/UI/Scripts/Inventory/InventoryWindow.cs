@@ -3,35 +3,45 @@ using TMPro;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 
-public class InventoryWindow : BaseWindow
+public class InventoryWindow : BaseWindowControl
 {
     public PlayerStorage playerStorage;
     public ItemSlot slotSelected;
     [SerializeField] Transform _contentSlots;
     [SerializeField] GameObject _itemSlotPrefab;
     [SerializeField] Slider _sliderAmountUse;
-    [SerializeField] BaseButton _btnUse;
+    [SerializeField] BaseButton _btnUse, _btnClose;
     [SerializeField] TMP_Text _tmpAmount;
     [SerializeField] TMP_Text _tmpDescriptionTitle, _tmpDescriptionContent;
-    protected virtual void Awake()
+    private void Awake()
+    {
+        playerStorage = FindObjectOfType<PlayerStorage>();
+    }
+    private void OnEnable()
     {
         _sliderAmountUse.onValueChanged.AddListener(delegate { UpdateValueFollowSlider(); });
         _btnUse.onClick.AddListener(delegate { UseItem(); });
-
+        _btnClose.onClick.AddListener(() => { CloseDialog(); });
     }
-    public override void ShowWindow(bool isContinueAction)
+    protected override void Update()
     {
-        base.ShowWindow(isContinueAction);
+        base.Update();
+        if (!isShowingDialog && _uiInput.inventory) ShowDialog(false);
+    }
+    public override void ShowDialog(bool isContinueAction)
+    {
+        base.ShowDialog(isContinueAction);
         // now is not any slot selected
         DisplayDefault();
 
         // update items
         UpdateItems();
     }
-    public override void CloseWindow()
+    public override void CloseDialog()
     {
-        base.CloseWindow();
+        base.CloseDialog();
         if(slotSelected) slotSelected.UnHighLight();
     }
     public void ArrangeSlots()
@@ -85,6 +95,8 @@ public class InventoryWindow : BaseWindow
         {
             CreateItemSlot(item);
         }
+        // nothing changed
+        playerStorage.hasChangedElements = false;
     }
     public void ClearOldSlots()
     {

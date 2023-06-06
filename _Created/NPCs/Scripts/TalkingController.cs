@@ -10,10 +10,8 @@ public class TalkingController: MonoBehaviour
     Queue<Conversation> conversationsQueue;
 
     public Conversation defaultConversation;
-    [HideInInspector] public MessageDialog dialog;
     private void Awake()
     {
-        dialog = FindObjectOfType<MessageDialog>();
         InitializeConversations();
     }
     public void InitializeConversations()

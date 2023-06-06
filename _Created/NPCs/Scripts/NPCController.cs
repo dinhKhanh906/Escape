@@ -7,14 +7,18 @@ public class NPCController : BaseInteraction
     public override void Interact()
     {
         Conversation conversation = talking.GetConversation();
+        MessageWindow messageWindow = UIWindowManager.instance.GetWindowByKey<MessageWindow>("message");
 
+        // set conversation for message window
         if (conversation != null)
         {
-            talking.dialog.ShowDialog(conversation);
+           messageWindow.SetConversation(conversation);
         }
         else
         {
-            talking.dialog.ShowDialog(talking.defaultConversation);
+            messageWindow.SetConversation(talking.defaultConversation);
         }
+        messageWindow.ShowDialog(false);
+
     }
 }

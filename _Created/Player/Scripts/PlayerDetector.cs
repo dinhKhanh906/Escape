@@ -44,6 +44,7 @@ public class PlayerDetector: MonoBehaviour
         }
         foreach(BaseInteraction target in targetsCollection)
         {
+            if (target == null) continue; // ignore if target is null
             if (!ViewableTarget(target.transform)) waiting.Enqueue(target);
         }
         for(int i=0; i<waiting.Count; i++)
@@ -53,6 +54,7 @@ public class PlayerDetector: MonoBehaviour
             // make sure any element in waiting is not in targetCollection
             if(targetsCollection.Contains(checking)) targetsCollection.Remove(checking);
 
+            if (checking == null) continue;
             if(ViewableTarget(checking.transform)) AddNewTarget(checking);
             else
             {

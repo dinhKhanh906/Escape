@@ -59,7 +59,7 @@ public class PlayerOnGround : PlayerBaseState
         {
             if (_context.detection.currentTarget)
             {
-                if(_context.detection.currentTarget.GetType() == typeof(EnemyInformation))
+                if(_context.detection.currentTarget.GetType() == typeof(EnemyController))
                 {
                     _context.SetMoveDirection(0f, 0f, 0f);
                     SwitchState(_factory.MeleeAttack());

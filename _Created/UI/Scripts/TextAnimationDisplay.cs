@@ -3,11 +3,14 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
+public delegate void Notification();
+
 [System.Serializable]
 public class TextAnimationDisplay
 {
     public bool completed { get; private set; }
-    public static Action<int> OnCompleted;
+    public Notification onCompleted;
+    public Notification onStart;
     public TextAnimationDisplay()
     {
         completed = true;
@@ -22,11 +25,13 @@ public class TextAnimationDisplay
             tmp.text = "";
 
             // display
+            onStart.Invoke();
             for (int i = 0; i < input.Length; i++)
             {
                 yield return new WaitForSeconds(delay);
                 tmp.text += input[i];
             }
+            onCompleted.Invoke();
             completed = true;
         }
 

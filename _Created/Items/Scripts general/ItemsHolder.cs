@@ -15,6 +15,7 @@ public class ItemsHolder
     public int Amount() => amount;
     public bool UseMultiple(int amount)
     {
+        string contentNotice = null;
         // constraint only for type use multiple item
         if (typeItem.onlyUseSingle) return false;
 
@@ -27,13 +28,22 @@ public class ItemsHolder
             typeItem.Use();
             this.amount--;
         }
+
+        contentNotice = $"Used {amount} ({typeItem.name})s";
+
+        // display result
+        UIWindowManager.instance.ShowNotice(new Notice() { type = TypeNotice.log, content = contentNotice});
         return true;
     }
     public bool UseSingle()
     {
         bool successful = typeItem.Use();
-        if (successful) this.amount--;
+        if (successful) 
+        {
+            this.amount--;
 
+            UIWindowManager.instance.ShowNotice(new Notice() { type = TypeNotice.log, content = $"Used a {typeItem.nameItem}" });
+        }
         return successful;
     }
     public bool Remove(int amount)

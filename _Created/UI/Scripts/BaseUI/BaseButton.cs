@@ -3,5 +3,5 @@ using UnityEngine.UI;
 
 public class BaseButton : Button
 {
-    
+
 }

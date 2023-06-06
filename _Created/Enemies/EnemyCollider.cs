@@ -8,9 +8,10 @@ public class EnemyCollider : MonoBehaviour, IReceiveDame
     [HideInInspector] public UnityEvent receiveDameEvent;
     [SerializeField] LayerMask selfLayer;
     [SerializeField] EnemyStateMachine _stateMachine;
-    [SerializeField] EnemyInformation _infor;
+    [SerializeField] EnemyController _infor;
     [SerializeField] Animator _animator;
     [SerializeField] float _backwardDistance = 0.6f;
+    [SerializeField] float _timeDestroySelf = 2f;
     private void Awake()
     {
         if (gameObject.layer != LayerMask.NameToLayer("Enemy"))
@@ -18,6 +19,7 @@ public class EnemyCollider : MonoBehaviour, IReceiveDame
     }
     public void ReceiveDame(float damage)
     {
+        // ignor if this enemy out of blood
         if (_infor.heath <= 0) return;
 
         _infor.heath -= damage;
@@ -26,6 +28,12 @@ public class EnemyCollider : MonoBehaviour, IReceiveDame
         {
             _animator.SetTrigger(EnemyAniParameter.death);
             _stateMachine.enabled = false;
+            _stateMachine.currentState = null;
+            // Destroy self after a duration
+            Destroy(gameObject, _timeDestroySelf);
+
+            // drop item
+            GetComponent<EnemyDropItem>().DropItems();
             return;
         }
         else

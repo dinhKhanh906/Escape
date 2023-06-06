@@ -11,7 +11,8 @@ public class DoorRequireKey : BaseInteraction
     {
         if (!isUnlocked)
         {
-            Debug.Log("This door is still locked");
+            Notice notice = new Notice() { type = TypeNotice.warning, content = "This door is still locked" };
+            UIWindowManager.instance.ShowNotice(notice);
         }
         else
         {

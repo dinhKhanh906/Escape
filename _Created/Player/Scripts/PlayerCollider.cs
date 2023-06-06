@@ -13,8 +13,8 @@ public class PlayerCollider: MonoBehaviour, IReceiveDame
     [SerializeField] PlayerInformation _infor;
     private void Awake()
     {
-        if (gameObject.layer != LayerMask.NameToLayer("Player collider"))
-            Debug.LogWarning($"{gameObject.name} is not 'Player collider' layer");
+        if (gameObject.layer != LayerMask.NameToLayer("Player"))
+            Debug.LogWarning($"{gameObject.name} is not 'Player' layer");
     }
     public void ReceiveDame(float damage)
     {

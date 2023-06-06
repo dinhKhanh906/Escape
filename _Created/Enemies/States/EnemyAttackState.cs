@@ -17,12 +17,7 @@ public class EnemyAttackState : EnemyBaseState
         else checkEnterAttack = _attacker.OnEnterAttack();
 
         // if enter attack successful
-        if(checkEnterAttack)
-        {
-            Debug.Log($"{_context.gameObject.name} enter attack");
-        }
-        // enter attack faild --> chasing
-        else
+        if(!checkEnterAttack)
         {
             SwitchState(_factory.Chasing());
         }

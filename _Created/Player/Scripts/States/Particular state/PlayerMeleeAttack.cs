@@ -53,7 +53,7 @@ public class PlayerMeleeAttack: PlayerBaseState
             return false;
         else if (!_context.detection.currentTarget)
             return false;
-        else if (_context.detection.currentTarget.GetType() != typeof(EnemyInformation))
+        else if (_context.detection.currentTarget.GetType() != typeof(EnemyController))
             return false;
         else
             return true;

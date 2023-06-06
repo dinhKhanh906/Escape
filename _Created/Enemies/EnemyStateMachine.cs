@@ -6,7 +6,7 @@ using DG.Tweening;
 public class EnemyStateMachine: MonoBehaviour
 {
     [Header("preference")]
-    public EnemyInformation infor;
+    public EnemyController infor;
     public Animator animator;
     public NavMeshAgent agent;
     [Header("Information")]
@@ -33,7 +33,7 @@ public class EnemyStateMachine: MonoBehaviour
     }
     private void Update()
     {
-        currentState.UpdateState();
+        if(currentState != null) currentState.UpdateState();
     }
     public void BackToDefaultState()
     {

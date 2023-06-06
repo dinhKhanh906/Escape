@@ -40,7 +40,7 @@ public class PlayerStateMachine : MonoBehaviour
     }
     private void Update()
     {
-        currentState.UpdateState();
+        if(currentState != null) currentState.UpdateState();
     }
     private void FixedUpdate()
     {
@@ -52,7 +52,7 @@ public class PlayerStateMachine : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(_targetEuler), turnDensity * Time.fixedDeltaTime);
         }
     }
-    private void OnDrawGizmosSelected()
+    private void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(groundCheck.position, radiusCheckGround);
@@ -84,7 +84,7 @@ public class PlayerStateMachine : MonoBehaviour
         // rotate to focus at target
         if (!detection.currentTarget) return;
 
-        EnemyInformation target = (EnemyInformation)detection.currentTarget;
+        EnemyController target = (EnemyController)detection.currentTarget;
         Vector3 positionTarget = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
         Vector3 direction = positionTarget - transform.position;
         transform.DORotateQuaternion(Quaternion.LookRotation(direction, transform.up), 0.5f);

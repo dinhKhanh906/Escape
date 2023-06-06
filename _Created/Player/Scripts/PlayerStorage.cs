@@ -1,58 +1,58 @@
 ﻿
 using UnityEngine;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 public class PlayerStorage: ItemStorage
 {
-    public bool hasChangedElements { get; private set; }
-    public InventoryWindow window;
-    public PlayerUIInput input;
-    protected override void Awake()
-    {
-        base.Awake();
-        window.playerStorage = this;
-    }
+    public bool hasChangedElements;
     private void Start()
     {
         hasChangedElements = true;
-        window.CloseWindow();
-    }
-    private void Update()
-    {
-        if (input.inventory)
-        {
-            bool enabled = window.isActiveAndEnabled;
-            if (enabled) window.CloseWindow();
-            else
-            {
-                window.ShowWindow(false);
-                // nothing changed
-                hasChangedElements = false;
-            }
-        }
     }
     public override bool AddHolder(ItemsHolder newHolder)
     {
         bool result = base.AddHolder(newHolder);
 
-        if (result) hasChangedElements = true;
+        // notice if player receive new items
+        if (result)
+        {
+            Notice notice = new Notice() { type = TypeNotice.log, content = $"Received new {newHolder.TypeItem().nameItem}" };
+            UIWindowManager.instance.ShowNotice(notice);
+            hasChangedElements = true;
+        }
 
         return result;
     }
-    public override ItemsHolder GetHolderByType<T>()
+    public override ItemsHolder DropHolderByType<T>()
     {
-        ItemsHolder result = base.GetHolderByType<T>();
+        ItemsHolder result = base.DropHolderByType<T>();
 
         if (result != null) hasChangedElements = true;
 
         return result;
     }
-    public override ItemsHolder GetHolderByType<T>(int amount)
+    public override ItemsHolder DropHolderByType<T>(int amount)
     {
-        ItemsHolder result = base.GetHolderByType<T>(amount);
+        ItemsHolder result = base.DropHolderByType<T>(amount);
 
         if(result != null) hasChangedElements = true;
 
         return result;
+    }
+    public virtual void ImportFromOtherStorage(ItemStorage otherStorage)
+    {
+        Dictionary<string, ItemsHolder> newHolders = otherStorage.DropAllHolder();
+        string noticeContent = "Added:";
+        if (newHolders != null)
+        {
+            foreach (ItemsHolder holder in newHolders.Values)
+            {
+                noticeContent += $"{holder.Amount()} ({holder.TypeItem().nameItem})s, ";
+                this.AddHolder(holder);
+            }
+        }
+        Notice notice = new Notice() { type = TypeNotice.log, content = noticeContent };
+        UIWindowManager.instance.ShowNotice(notice);
     }
 }

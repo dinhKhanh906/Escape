@@ -4,35 +4,41 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MessageDialog: MonoBehaviour
+public class MessageWindow: BaseWindowControl
 {
     [SerializeField] PlayerThirdPersonInput _input;
     [SerializeField] float _delayText = 1f;
     [SerializeField] Image _avatar;
     [SerializeField] TMP_Text _nameActor;
     [SerializeField] TMP_Text _content;
+    [SerializeField] BaseButton _btnNext;
     [SerializeField] Queue<Message> _allMessages;
     [SerializeField] Message _currentMessage;
 
     [SerializeField] TextAnimationDisplay textAnimation;
-    private void Start()
+    private void OnEnable()
     {
-        _allMessages = new Queue<Message>();
-        HideDialog();
+        _btnNext.onClick.AddListener(() => NextMessage());
     }
-    private void Update()
+    protected override void Start()
     {
-        if (Input.GetKeyDown(KeyCode.N) && textAnimation.completed)
+        base.Start();
+        _allMessages = new Queue<Message>();
+    }
+    protected override void Update()
+    {
+        if (_uiInput.accept && textAnimation.completed)
         {
             NextMessage();
         }
     }
-    public void ShowDialog(Conversation conversation)
+    public void SetConversation(Conversation conversation)
     {
-        _input.listening = false;
-        gameObject.SetActive(true);
-
         _allMessages = conversation.messagesQueue;
+    }
+    public override void ShowDialog(bool isContinueAction)
+    {
+        base.ShowDialog(isContinueAction);
 
         NextMessage();
     }
@@ -50,20 +56,20 @@ public class MessageDialog: MonoBehaviour
             _avatar.sprite = newMessage.actor.avatar;
             _nameActor.text = newMessage.actor.name;
             //_content.text = newMessage.content;
+            textAnimation.onStart += () => _btnNext.gameObject.SetActive(false); 
+            textAnimation.onCompleted += () => _btnNext.gameObject.SetActive(true);
             StartCoroutine(textAnimation.Sequence(_content, newMessage.content, _delayText));
         }
         else
         {
-            HideDialog();
+            CloseDialog();
         }
 
-        // maybe little animation here
     }
-    public void HideDialog()
+    public override void CloseDialog()
     {
-        _currentMessage = null;
+        base.CloseDialog();
 
-        _input.listening = true;
-        gameObject.SetActive(false);
+        _currentMessage = null;
     }
 }

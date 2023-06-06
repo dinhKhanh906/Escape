@@ -8,7 +8,7 @@ public class EnemyAttackEvent: MonoBehaviour
 {
     public EnemyAttacker attacker;
     [SerializeField] LayerMask playerLayer;
-    [SerializeField] EnemyInformation infor;
+    [SerializeField] EnemyController infor;
     [Header("Hit box preview")]
     [SerializeField] bool _showHitBox;
     [SerializeField] Vector3 _centerOffset;

@@ -1,7 +1,4 @@
-﻿using System;
-using Unity.VisualScripting;
-using UnityEditor.Rendering.LookDev;
-using UnityEditor.ShaderGraph;
+﻿
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -18,14 +15,14 @@ public class PlayerCollider: MonoBehaviour, IReceiveDame
     }
     public void ReceiveDame(float damage)
     {
-        if (_infor.heath <= 0) return;
+        if (_infor.Heath <= 0) return;
 
-        _infor.heath -= damage;
+        _infor.Heath -= damage;
         receiveDameEvent.Invoke();
-        if (_infor.heath <= 0f)
+        if (_infor.Heath <= 0f)
         {
             _animator.SetTrigger(PlayerAniParameter.death);
-            _stateMachine.enabled = false;
+            GameState.instance.Gameover();
             return;
         }
         else

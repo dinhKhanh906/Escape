@@ -24,6 +24,32 @@ public class PlayerStorage: ItemStorage
 
         return result;
     }
+    public virtual ItemsHolder DropHolderByKey(string key)
+    {
+        ItemsHolder result = null;
+        result = storage[key];
+
+        if (result != null) 
+        { 
+            hasChangedElements = true;
+            storage.Remove(key);
+        }
+
+        return result;
+    }
+    public virtual ItemsHolder DropHolderByKey(string key, int amount)
+    {
+        ItemsHolder result = null;
+        result = storage[key];
+
+        if (result != null) 
+        { 
+            hasChangedElements = true;
+            result.Remove(amount);
+        }
+
+        return result;
+    }
     public override ItemsHolder DropHolderByType<T>()
     {
         ItemsHolder result = base.DropHolderByType<T>();

@@ -84,7 +84,8 @@ public class PlayerStateMachine : MonoBehaviour
         // rotate to focus at target
         if (!detection.currentTarget) return;
 
-        EnemyController target = (EnemyController)detection.currentTarget;
+        //EnemyController target = (EnemyController)detection.currentTarget;
+        BaseInteraction target = detection.currentTarget;
         Vector3 positionTarget = new Vector3(target.transform.position.x, transform.position.y, target.transform.position.z);
         Vector3 direction = positionTarget - transform.position;
         transform.DORotateQuaternion(Quaternion.LookRotation(direction, transform.up), 0.5f);

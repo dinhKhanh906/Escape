@@ -65,7 +65,7 @@ public class PlayerAttackEvent : MonoBehaviour
             foreach(Collider col in enemyCols)
             {
                 EnemyCollider enemy = col.GetComponent<EnemyCollider>();
-                enemy.ReceiveDame(playerInfor.damage);
+                enemy.ReceiveDame(playerInfor.Damage);
             }
         }
     }

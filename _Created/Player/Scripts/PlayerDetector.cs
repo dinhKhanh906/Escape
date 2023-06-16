@@ -1,10 +1,13 @@
 ﻿
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerDetector: MonoBehaviour
 {
-    [HideInInspector] public BaseInteraction currentTarget;
+    public BaseInteraction currentTarget;
+    [HideInInspector] public UnityEvent onCurrentTargetChanged;
     public PlayerThirdPersonInput input;
     [SerializeField] protected List<BaseInteraction> targetsCollection;
     [SerializeField] protected Queue<BaseInteraction> waiting; // for targets detected but not viewable
@@ -12,11 +15,14 @@ public class PlayerDetector: MonoBehaviour
     // viewable check
     Ray rayCheck;
     RaycastHit hit;
+    // for highlight target
+    [SerializeField] OutlineCreator outlineCreator;
     // follow camera
     private Transform cam;
     private Vector3 targetEuler;
     private void Awake()
     {
+        onCurrentTargetChanged = new UnityEvent();
         waiting = new Queue<BaseInteraction>();
         cam = Camera.main.transform;
     }
@@ -40,26 +46,31 @@ public class PlayerDetector: MonoBehaviour
         // check targets viewable or not
         if(currentTarget != null)
         {
-            if (!targetsCollection.Contains(currentTarget)) currentTarget = null;
+            if (!ViewableTarget(currentTarget))
+            {
+                SwitchTarget();
+            }
         }
-        foreach(BaseInteraction target in targetsCollection)
+        for(int i=0; i<targetsCollection.Count; i++)
         {
-            if (target == null) continue; // ignore if target is null
-            if (!ViewableTarget(target.transform)) waiting.Enqueue(target);
+            if (targetsCollection[i] == null)  // ignore if target is null
+            {
+                targetsCollection.RemoveAt(i);
+                continue;
+            }
         }
         for(int i=0; i<waiting.Count; i++)
         {
             BaseInteraction checking = waiting.Dequeue();
 
             // make sure any element in waiting is not in targetCollection
-            if(targetsCollection.Contains(checking)) targetsCollection.Remove(checking);
+            //if(waiting.Contains(checking)) targetsCollection.Remove(checking);
 
             if (checking == null) continue;
-            if(ViewableTarget(checking.transform)) AddNewTarget(checking);
+            if(ViewableTarget(checking)) AddNewTarget(checking);
             else
             {
                 waiting.Enqueue(checking);
-                RemoveTarget(checking);
             }
         }
     }
@@ -77,7 +88,7 @@ public class PlayerDetector: MonoBehaviour
         BaseInteraction interaction = other.GetComponent<BaseInteraction>();
         if (interaction != null)
         {
-            if (ViewableTarget(interaction.transform)) AddNewTarget(interaction);
+            if (ViewableTarget(interaction)) AddNewTarget(interaction);
             else waiting.Enqueue(interaction);
         }
     }
@@ -104,7 +115,9 @@ public class PlayerDetector: MonoBehaviour
         else if (!currentTarget.AllowInteract())
         {
             // can not interact to Target, maybe it's too far
-            Debug.Log("can not interact to Target, maybe it's too far");
+            //Debug.Log("can not interact to Target, maybe it's too far");
+            Notice notice = new Notice() { type = TypeNotice.warning, content = "can not interact to Target, maybe it's too far" };
+            UIWindowManager.instance.ShowNotice(notice);
             return false;
         }
         else
@@ -119,15 +132,20 @@ public class PlayerDetector: MonoBehaviour
         // currentTarget = null if collection is empty
         if (targetsCollection.Count <= 0)
         {
+            indexTarget = 0;
             currentTarget = null;
+
+            onCurrentTargetChanged.Invoke();
             return false;
         }
 
         // update indexTarget
         indexTarget = indexTarget + 1 >= targetsCollection.Count ? 0 : indexTarget + 1;
-        
+
         // switch target
         currentTarget = targetsCollection[indexTarget];
+        
+        onCurrentTargetChanged.Invoke();
         return true;
     }
     public bool AddNewTarget(BaseInteraction newTarget)
@@ -145,8 +163,7 @@ public class PlayerDetector: MonoBehaviour
     }
     public bool RemoveTarget(BaseInteraction target)
     {
-        // remove target
-        if (target && targetsCollection.Contains(target))
+        if (targetsCollection.Contains(target))
         {
             //remove target
             targetsCollection.Remove(target);
@@ -158,18 +175,17 @@ public class PlayerDetector: MonoBehaviour
         else
             return false;
     }
-    private bool ViewableTarget(Transform target)
+    private bool ViewableTarget(BaseInteraction target)
     {
-        bool viewable = false;
-
         float maxDistance = Vector3.Distance (transform.position, target.transform.position) + 5f;
         Vector3 direction = (target.transform.position - transform.position).normalized;
 
         if(Physics.Raycast(transform.position, direction, out hit, maxDistance))
         {
-            if (hit.transform == target) viewable = true;
-            else viewable = false;
+            if (hit.transform == target.transform) return true;
+            else return false;
         }
-        return viewable;
+        else
+            return true;    // return true because this ray no interact to any object
     }
 }

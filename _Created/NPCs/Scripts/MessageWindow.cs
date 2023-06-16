@@ -25,7 +25,7 @@ public class MessageWindow: BaseWindowControl
         base.Start();
         _allMessages = new Queue<Message>();
     }
-    protected override void Update()
+    protected virtual void Update()
     {
         if (_uiInput.accept && textAnimation.completed)
         {

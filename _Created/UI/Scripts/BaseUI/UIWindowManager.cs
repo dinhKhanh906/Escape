@@ -47,6 +47,9 @@ public class UIWindowManager : MonoBehaviour
     }
     public void ShowNotice(Notice newNotice)
     {
-        notice.AddNotice(newNotice);
+        if (notice)
+            notice.AddNotice(newNotice);
+        else
+            Debug.LogWarning("Not found notice window");
     }
 }

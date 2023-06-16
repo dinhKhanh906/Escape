@@ -8,7 +8,8 @@ public class KeyInformation: BaseItem
     public override bool Use()
     {
         bool openSuccessful = false;
-        string contentNotice = null;
+        TypeNotice noticeType = TypeNotice.warning;
+        string contentNotice = "make sure target is a door";
         // unlock the door nearby
         PlayerDetector detector = FindObjectOfType<PlayerDetector>();
         if (detector != null)
@@ -30,9 +31,10 @@ public class KeyInformation: BaseItem
 
                 // get result
                 contentNotice = openSuccessful ? "Open door target successful !" : "This key incorrect door target";
+                noticeType = openSuccessful ? TypeNotice.log : TypeNotice.warning;
             }
         }
-        Notice notice = new Notice() { type = TypeNotice.log, content = contentNotice};
+        Notice notice = new Notice() { type = noticeType, content = contentNotice};
         UIWindowManager.instance.ShowNotice(notice);
         return openSuccessful;
     }

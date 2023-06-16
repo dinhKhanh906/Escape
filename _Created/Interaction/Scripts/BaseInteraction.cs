@@ -1,16 +1,23 @@
 ﻿
 using UnityEngine;
 
+[RequireComponent(typeof(OutlineTarget))]
 public abstract class BaseInteraction : MonoBehaviour, IInteraction
 {
     [SerializeField] protected bool previewDistanceRequire;
     public float distanceRequireInteract;
+    public OutlineTarget outlineTarget;
 
     protected Transform _player;
     protected float _distance2Player;
+    private void Reset()
+    {
+        outlineTarget = GetComponent<OutlineTarget>();
+    }
     protected virtual void Awake()
     {
         _player = GameObject.FindGameObjectWithTag("Player").transform;
+        if(outlineTarget == null) outlineTarget = GetComponent<OutlineTarget>();
     }
     protected virtual void OnDrawGizmosSelected()
     {

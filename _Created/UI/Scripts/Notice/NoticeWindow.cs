@@ -7,10 +7,13 @@ public class NoticeWindow : MonoBehaviour
 {
     [SerializeField] GameObject noticeForm;
     [SerializeField] float timeDisplayForm;
-    [SerializeField] float timeFormInQueue;
+    float _timeFormInQueue;
     [SerializeField] Transform contentHolder;
     public Queue<GameObject> poolForms = new Queue<GameObject>();
-
+    private void Awake()
+    {
+        _timeFormInQueue = timeDisplayForm + 3f; // always in queue after 3 seconds if don't used
+    }
     public void AddNotice(Notice newNotice)
     {
         // setup form
@@ -32,7 +35,7 @@ public class NoticeWindow : MonoBehaviour
     }
     IEnumerator SetTimeFormInQueue()
     {
-        yield return new WaitForSeconds(timeFormInQueue);
+        yield return new WaitForSeconds(_timeFormInQueue);
 
         // destroy if this form not used
         if(poolForms.Count > 0)

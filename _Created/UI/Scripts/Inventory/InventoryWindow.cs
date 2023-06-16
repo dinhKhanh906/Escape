@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
-using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 
 public class InventoryWindow : BaseWindowControl
 {
@@ -15,7 +13,7 @@ public class InventoryWindow : BaseWindowControl
     [SerializeField] BaseButton _btnUse, _btnClose;
     [SerializeField] TMP_Text _tmpAmount;
     [SerializeField] TMP_Text _tmpDescriptionTitle, _tmpDescriptionContent;
-    private void Awake()
+    protected override void Awake()
     {
         playerStorage = FindObjectOfType<PlayerStorage>();
     }
@@ -25,9 +23,8 @@ public class InventoryWindow : BaseWindowControl
         _btnUse.onClick.AddListener(delegate { UseItem(); });
         _btnClose.onClick.AddListener(() => { CloseDialog(); });
     }
-    protected override void Update()
+    protected virtual void Update()
     {
-        base.Update();
         if (!isShowingDialog && _uiInput.inventory) ShowDialog(false);
     }
     public override void ShowDialog(bool isContinueAction)
@@ -121,6 +118,8 @@ public class InventoryWindow : BaseWindowControl
         int amount = int.Parse(_tmpAmount.text);
 
         slotSelected.Use(amount);
+        if (slotSelected.itemHolder.Amount() <= 0)
+            playerStorage.storage.Remove(slotSelected.itemHolder.TypeItem().key);
 
         // un highligt slot selected
         slotSelected.UnHighLight();
